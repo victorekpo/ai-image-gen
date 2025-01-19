@@ -42,6 +42,8 @@ def save_image(image_url, save_path):
 def clean_filename(prompt):
     # Define a list of stop words to remove
     stop_words = ['a', 'an', 'the', 'of', 'and', 'or', 'in', 'at', 'to', 'with', 'on', 'for', 'by', 'is', 'it', 'this', 'that', 'these', 'those']
+    # Convert prompt to lowercase
+    prompt = prompt.lower()
     # Remove stop words and unwanted characters
     cleaned_prompt = re.sub(r'\b(?:' + '|'.join(stop_words) + r')\b', '', prompt)
     cleaned_prompt = re.sub(r'[^\w\s]', '', cleaned_prompt)  # Remove punctuation
