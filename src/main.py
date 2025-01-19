@@ -3,6 +3,7 @@ from openai import OpenAI
 import requests
 from dotenv import load_dotenv
 from datetime import datetime
+import re
 
 load_dotenv()
 
@@ -38,6 +39,15 @@ def save_image(image_url, save_path):
     else:
         print("Failed to download image.")
 
+def clean_filename(prompt):
+    # Define a list of stop words to remove
+    stop_words = ['a', 'an', 'the', 'of', 'and', 'or', 'in', 'at', 'to', 'with', 'on', 'for', 'by', 'is', 'it', 'this', 'that', 'these', 'those']
+    # Remove stop words and unwanted characters
+    cleaned_prompt = re.sub(r'\b(?:' + '|'.join(stop_words) + r')\b', '', prompt)
+    cleaned_prompt = re.sub(r'[^\w\s]', '', cleaned_prompt)  # Remove punctuation
+    cleaned_prompt = re.sub(r'\s+', '_', cleaned_prompt.strip())  # Replace spaces with underscores
+    return cleaned_prompt
+
 # Main function
 def main():
     # Your prompt
@@ -46,11 +56,14 @@ def main():
     # Generate image based on the prompt
     image_url = generate_image(prompt)
 
+    # Get the image filename from the prompt
+    filename = clean_filename(prompt)
+
     # Get the current timestamp
     timestamp = datetime.now().strftime("%m-%d-%Y-%H-%M-%S")
 
     # Set the save path
-    save_path = os.path.join(os.getcwd(), "generated", f"image-{timestamp}.png")
+    save_path = os.path.join(os.getcwd(), "generated", f"{filename}-{timestamp}.png")
 
     # Save the image to your computer
     save_image(image_url, save_path)
